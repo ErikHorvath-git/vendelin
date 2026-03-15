@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+
+
+<style>
+body{
+    margin:0;
+    background:#f5f5f5;
+    display:flex;
+    justify-content:center;
+}
+
+#viewer{
+    width:100%;
+    max-width:1000px;
+}
+
+canvas{
+    width:100%;
+    height:auto;
+    display:block;
+    margin-bottom:20px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.15);
+    background:white;
+}
+</style>
+
+</head>
+
+<body>
+
+<div id="viewer"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+<script>
+
+const url = "vendelin_jedalny_a_napojovy_listok_2026.pdf";
+
+const pdfjsLib = window['pdfjs-dist/build/pdf'];
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+const viewer = document.getElementById("viewer");
+
+pdfjsLib.getDocument(url).promise.then(function(pdf){
+
+    for(let pageNum = 1; pageNum <= pdf.numPages; pageNum++){
+
+        pdf.getPage(pageNum).then(function(page){
+
+            const scale = 1.5;
+            const viewport = page.getViewport({scale:scale});
+
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d");
+
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            viewer.appendChild(canvas);
+
+            page.render({
+                canvasContext: context,
+                viewport: viewport
+            });
+
+        });
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
